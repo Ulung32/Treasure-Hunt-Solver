@@ -37,47 +37,44 @@ namespace util{
         // }
     }
     public class Matrix { // Isi matriks yg diperluin kurleb gini (yg DFS)
-        public char[,] container = new char[100,100];
+        public char[,] container;
         public int startRow {get;set;} // Perlu start
         public int startCol {get;set;}
         public int nRow {get;set;}
         public int nCol {get;set;}
         public int totalTreasure{get;set;}
-        public Matrix(string fileName) {
-            nRow=0;
-            nCol=0;
+        public Matrix(string[] fileContent, int row, int col) {
+            nRow = row;
+            nCol = col;
+            container = new char[nRow,nCol];
             totalTreasure = 0;
-            if (File.Exists(fileName)) {
-                foreach(string s in File.ReadLines(fileName)) {
-                    int counter = 0;
-                    for (int i=0; i<s.Length; i++) {
-                        if (s[i] != ' ') {
-                            container[nRow,counter] = s[i];
-                            if (s[i] == 'K') {
-                                startRow = nRow;
-                                startCol = counter;
-                            } else if (s[i] == 'T') {
-                                totalTreasure++;
-                            }
-                            counter++;
+            int currRow = 0;
+            foreach(string s in fileContent) {
+                int counter = 0;
+                for (int i=0; i<s.Length; i++) {
+                    if (s[i] != ' ') {
+                        container[currRow,counter] = s[i];
+                        if (s[i] == 'K') {
+                            startRow = currRow;
+                            startCol = counter;
+                        } else if (s[i] == 'T') {
+                            totalTreasure++;
                         }
+                        counter++;
                     }
-                    if (nRow == 0) {
-                        nCol = counter;
-                    }
-                    nRow++;
                 }
-            } else {
-                Console.WriteLine("File not found");
+                currRow++;
             }
         }
-        public void printMatrix() {
+        public string printMatrix() {
+            string m = "";
             for (int i=0; i<nRow; i++) {
                 for (int j=0; j<nCol; j++) {
-                    Console.Write(container[i,j]);
+                    m += container[i, j].ToString() + " ";
                 }
-                Console.WriteLine();
+                m += "\n";
             }
+            return m;
         }
     }
 }
