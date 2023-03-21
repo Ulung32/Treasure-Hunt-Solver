@@ -7,7 +7,7 @@ namespace Bfs {
     using Utils;
     using Matrix;
     class BFSsolver {
-        static Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> BFS(char[,] maze, Tuple<int,int> K, int TreasureCount){
+        public static Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> BFS(char[,] maze, Tuple<int,int> K, int TreasureCount){
             List<Tuple<int, int>> path = new List<Tuple<int, int>> ();
             Tuple<int,int> start = K;
             List<Tuple<int,int>> searchPath = new List<Tuple<int, int>>();
