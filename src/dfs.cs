@@ -62,11 +62,13 @@ namespace Dfs {
                     }
                 }
                 if (!isStuck) {
-                    if (m.container[i,j] == 'T' && !backTrack) {
-                        treasureCount++;
+                    if (!backTrack) {
+                        if (m.container[i,j] == 'T') {
+                            treasureCount++;
+                        }
+                        visitCount++;
                     }
                     path.Push(new Tuple<int,int>(i,j));
-                    visitCount++;
                 }
                 visited[i,j]++;
             }
