@@ -46,9 +46,12 @@
             this.button3 = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -150,9 +153,9 @@
             this.label5.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(734, 578);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(162, 21);
+            this.label5.Size = new System.Drawing.Size(167, 21);
             this.label5.TabIndex = 8;
-            this.label5.Text = "Execution Time:";
+            this.label5.Text = "Execution Time: ";
             this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label6
@@ -161,9 +164,10 @@
             this.label6.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(736, 538);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(72, 21);
+            this.label6.Size = new System.Drawing.Size(77, 21);
             this.label6.TabIndex = 9;
-            this.label6.Text = "Route:";
+            this.label6.Text = "Route: ";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // label7
             // 
@@ -226,7 +230,7 @@
             this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.button3.Enabled = false;
             this.button3.Font = new System.Drawing.Font("Georgia", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(824, 163);
+            this.button3.Location = new System.Drawing.Point(823, 110);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(242, 40);
             this.button3.TabIndex = 15;
@@ -237,9 +241,9 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = global::GUI.Properties.Resources.Treasure_Chest;
-            this.pictureBox2.Location = new System.Drawing.Point(824, 235);
+            this.pictureBox2.Location = new System.Drawing.Point(823, 163);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(242, 228);
+            this.pictureBox2.Size = new System.Drawing.Size(242, 219);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 17;
             this.pictureBox2.TabStop = false;
@@ -255,12 +259,33 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
+            // trackBar1
+            // 
+            this.trackBar1.Enabled = false;
+            this.trackBar1.Location = new System.Drawing.Point(939, 409);
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(126, 69);
+            this.trackBar1.TabIndex = 18;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Georgia", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(819, 418);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(125, 21);
+            this.label10.TabIndex = 19;
+            this.label10.Text = "Simulation: ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.ClientSize = new System.Drawing.Size(1126, 637);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button3);
@@ -285,6 +310,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -310,6 +336,8 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.Label label10;
     }
 }
 

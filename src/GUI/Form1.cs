@@ -16,10 +16,27 @@ using System.Drawing.Drawing2D;
 
 namespace GUI
 {
+    using Bfs;
+    using Dfs;
+    using Matrix;
+    using Utils;
+    using System.Reflection.Emit;
+    using System.Linq.Expressions;
+    using System.Xml.XPath;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+
     public partial class Form1 : Form
     {
         private string fileName;
         private string[] fileContents;
+        private Matrix maze;
+        private BFSsolver solve_bfs;
+        private Dfs solve_dfs;
+        private List<Tuple<int, int>> path;
+        private List<Tuple<int, int>> searchPath;
+        private double bfs_exectime;
+        private int pause_duration; 
         private Boolean validFile = false;
         public Form1()
         {
@@ -29,7 +46,7 @@ namespace GUI
             this.MaximizeBox = false;
 
             // To make it unresizable
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            //this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             // To make it appear at the center of the screen
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -50,16 +67,68 @@ namespace GUI
                 MessageBox.Show("File is not valid, please input another file!");
                 dataGridView1.Visible = false;
                 button3.Enabled = false;
-            } 
+            }
             else
             {
-                MessageBox.Show("The map from your file has been visualized! :)");
+                label4.Text = "Steps: ";
+                label5.Text = "Execution Time: ";
+                label6.Text = "Route: ";
+                label7.Text = "Nodes: ";
+                label9.Visible = false;
+
+                int row = 0;
+                int invalidInput = 0;
+                int totalK = 0;
+                int totalT = 0;
+                for (int i = 0; i < fileContents.Length; i++)
+                {
+                    int col = 0;
+                    for (int j = 0; j < fileContents[i].Length; j++)
+                    {
+                        // Set the value of the cell based on the character in the file
+                        switch (fileContents[i][j])
+                        {
+                            case 'K':
+                                dataGridView1[col, row].Style.BackColor = Color.White;
+                                totalK++;
+                                col++;
+                                break;
+                            case 'X':
+                                dataGridView1[col, row].Style.BackColor = Color.Black;
+                                col++;
+                                break;
+                            case 'T':
+                                dataGridView1[col, row].Style.BackColor = Color.White;
+                                totalT++;
+                                col++;
+                                break;
+                            case 'R':
+                                dataGridView1[col, row].Style.BackColor = Color.White;
+                                col++;
+                                break;
+                            case ' ':
+                                break;
+                            default:
+                                invalidInput++;
+                                break;
+                        }
+                    }
+                    if (col > 0)
+                    {
+                        row++;
+                    }
+                }
+            MessageBox.Show("The map from your file has been visualized! :)");
                 // To make the visualization visible
                 dataGridView1.Visible = true;
 
                 // To make the search button enabled
                 button3.Enabled = true;
-            }  
+
+                // To make the trackbar enabled
+                trackBar1.Enabled = true;
+                trackBar1.Value = 0;
+            }
         }
 
         
@@ -97,24 +166,34 @@ namespace GUI
 
         }
 
+        // Steps
         private void label4_Click(object sender, EventArgs e)
         {
-
+            
         }
 
+        // Execution Time
         private void label5_Click(object sender, EventArgs e)
         {
-
+            
         }
 
+        // Route
+        private void label6_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        // Node
         private void label7_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            
+            textBox1.ReadOnly = true;
+            textBox1.HideSelection = true;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -141,6 +220,7 @@ namespace GUI
                 {
                     radioButton1.Enabled = true;
                     radioButton2.Enabled = true;
+
                 }
             }
         }
@@ -164,6 +244,23 @@ namespace GUI
                     cols = nonBlankChars;
                 }
             }
+
+            // Fill maze
+            string[] copyFileContents = fileContents;
+            maze = new Matrix(copyFileContents, rows, cols);
+            //MessageBox.Show(fileContents);
+
+            // Solve BFS
+            Tuple<int, int> K = new Tuple<int, int>(maze.startRow, maze.startCol);
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            path = BFSsolver.BFS(maze.container, K, maze.totalTreasure).Item1;
+            stopwatch.Stop();
+            searchPath = BFSsolver.BFS(maze.container, K, maze.totalTreasure).Item2;
+            bfs_exectime = stopwatch.Elapsed.TotalMilliseconds;
+
+            // Solve DFS
+            solve_dfs = new Dfs(maze);
 
             // Set up the DataGridView
             dataGridView1.RowCount = rows;
@@ -211,6 +308,7 @@ namespace GUI
                         case 'K':
                             dataGridView1[col, row].Value = "Start";
                             totalK++;
+                            K = Tuple.Create(i, j); // Set starting point
                             col++;
                             break;
                         case 'X':
@@ -232,6 +330,10 @@ namespace GUI
                             break;
                     }
                 }
+
+                // To make the blocks uneditable
+                dataGridView1.ReadOnly = true;
+
                 if (col > 0)
                 {
                     row++;
@@ -253,15 +355,73 @@ namespace GUI
 
         }
 
+        // Search Button
         private void button3_Click(object sender, EventArgs e)
         {
-            // To make the tresure found message visible
-            label9.Visible = true;
+            // BFS Button
+            if (radioButton1.Checked == true)
+            {
+                foreach (Tuple<int, int> block in searchPath) // Bisa ganti ke path atau searchPath
+                {
+                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
+                    Application.DoEvents();
+                    Thread.Sleep(pause_duration * 100);
+                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
+                    Application.DoEvents();
+                }
+                label4.Text += path.Count.ToString(); // Steps
+                label5.Text += bfs_exectime.ToString() + " ms"; // Execution Time
+                label6.Text += Utils.convertRoute(path); // Route
+                label7.Text += searchPath.Count.ToString(); // Nodes
+                label9.Visible = true;
+
+                // To disable button
+                button3.Enabled = false;
+
+                // To reset pause duration
+                pause_duration = 0;
+            }
+            // DFS Button
+            else if (radioButton2.Checked == true)
+            {
+                foreach (Tuple<int, int> block in solve_dfs.searchPath) // bisa diganti pathResult atau searchPath
+                {
+                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
+                    Application.DoEvents();
+                    Thread.Sleep(pause_duration * 100);
+                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
+                    Application.DoEvents();
+                }
+                label4.Text += solve_dfs.stepCount.ToString(); // Steps
+                label5.Text += solve_dfs.execTime.ToString() + " ms"; // Execution Time
+                label6.Text += Utils.convertRoute(solve_dfs.pathResult); // Route
+                label7.Text += solve_dfs.visitCount.ToString(); // Nodes
+                label9.Visible = true;
+
+                // To disable button
+                button3.Enabled = false;
+
+                // To reset pause duration
+                pause_duration = 0;
+            }
+            // To make the trackbar disabled
+            trackBar1.Enabled = false;
+
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            pause_duration = trackBar1.Value;
         }
     }
 }
