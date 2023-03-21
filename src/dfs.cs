@@ -11,9 +11,11 @@ namespace Dfs {
         public int stepCount {get; set;}
         public long execTime {get;set;}
         private int maxVisit; // jumlah maksimum visit suatu node. Untuk backtracking
-        public List<Tuple<int,int>> pathResult = new List<Tuple<int, int>>();
+        public List<Tuple<int,int>> pathResult = new List<Tuple<int, int>>(); // Jalur hasil
+        public List<Tuple<int,int>> searchPath = new List<Tuple<int, int>>(); // Jalur pencarian lengkap
         public Dfs(ref Matrix m) {
             Stack<Tuple<int,int>> path = new Stack<Tuple<int,int>>(); // Stack penampung path sementara
+            Stack<Tuple<int,int>> searchPathStack = new Stack<Tuple<int,int>>(); // Stack penampung jalur pencarian lengkap
             Tuple<int,int> temp;
             visitCount = 1;
             maxVisit = 1;
@@ -24,6 +26,7 @@ namespace Dfs {
             var stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
             path.Push(new Tuple<int,int>(i,j));
+            searchPathStack.Push(new Tuple<int,int>(i,j));
             visited[i,j]++;
             while (treasureCount < m.totalTreasure) {
                 bool isStuck = false;
@@ -71,11 +74,15 @@ namespace Dfs {
                     path.Push(new Tuple<int,int>(i,j));
                 }
                 visited[i,j]++;
+                searchPathStack.Push(new Tuple<int,int>(i,j));
             }
             while(path.TryPop(out temp)) {
                 pathResult.Insert(0,temp);
                 m.container[temp.Item1,temp.Item2] = 'H';
                 stepCount++;
+            }
+            while(searchPathStack.TryPop(out temp)) {
+                searchPath.Insert(0,temp);
             }
             stepCount--;
             stopwatch.Stop();
