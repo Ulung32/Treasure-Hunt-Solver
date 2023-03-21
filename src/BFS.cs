@@ -1,12 +1,16 @@
 using System;
+using System.IO;
+using System.Diagnostics;
 using System.Collections.Generic;
-using utils;
+using util;
 class BFSsolver{
-    static List<Tuple<int, int>> BFS(string[,] maze, Tuple<int,int> K, int TreasureCount){
+    static List<Tuple<int, int>> BFS(char[,] maze, Tuple<int,int> K, int TreasureCount){
         List<Tuple<int, int>> path = new List<Tuple<int, int>> ();
         Tuple<int,int> start = K;
+        List<Tuple<int,int>> searchPath = new List<Tuple<int, int>>();
         while(TreasureCount > 0){
             Queue<Tuple<int, int>> queue = new Queue<Tuple<int, int>>();
+            searchPath.Add(start);
             queue.Enqueue(new Tuple<int,int> (start.Item1, start.Item2));
             Dictionary<Tuple<int, int>, Tuple<int, int>> parent = new Dictionary<Tuple<int, int>, Tuple<int, int>>();
             parent[new Tuple<int, int>(start.Item1, start.Item2)] = null;
@@ -20,42 +24,51 @@ class BFSsolver{
                 current = queue.Dequeue();
                 Console.WriteLine("dequeue");
                 Console.WriteLine("{0}, {1}", current.Item1, current.Item2);
-                if(maze[current.Item1, current.Item2] == "T" && start!= current){
-                    Console.WriteLine("Masuk");
-                    Console.WriteLine("{0}, {1}", start.Item1, start.Item2);
+                if(maze[current.Item1, current.Item2] == 'T' && start!= current){
+                    // Console.WriteLine("Masuk");
+                    // Console.WriteLine("{0}, {1}", start.Item1, start.Item2);
                     List<Tuple<int, int>> temp = BFS2point(maze, start, current);
                     for(int i = 0; i < temp.Count; i++){
                         path.Add(temp[i]);
-                        Console.WriteLine("{0}, {1}", temp[i].Item1, temp[i].Item2);
+                        // Console.WriteLine("{0}, {1}", temp[i].Item1, temp[i].Item2);
                     }
                     start= current;
                     // Console.WriteLine("{0}, {1}", current.Item1, current.Item2);
-                    Console.WriteLine("{0}, {1}", start.Item1, start.Item2);
+                    // Console.WriteLine("{0}, {1}", start.Item1, start.Item2);
                     TreasureCount --;
                     // found = true;
                     // break;
                 }
-                if(current.Item1 > 0 && maze[current.Item1-1, current.Item2] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1-1, current.Item2))){
+                if(current.Item1 > 0 && maze[current.Item1-1, current.Item2] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1-1, current.Item2))){
                     queue.Enqueue(new Tuple<int, int>(current.Item1 - 1, current.Item2));
+                    Tuple<int,int> temp = new Tuple<int, int>(current.Item1 - 1, current.Item2);
+                    searchPath.Add(temp);
                     parent[new Tuple<int, int>(current.Item1 - 1, current.Item2)] = current;
                 }
-                if(current.Item1 < maze.GetLength(0)-1 && maze[current.Item1+1, current.Item2] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1+1, current.Item2))){
+                if(current.Item1 < maze.GetLength(0)-1 && maze[current.Item1+1, current.Item2] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1+1, current.Item2))){
                     queue.Enqueue(new Tuple<int, int>(current.Item1 + 1, current.Item2));
+                    Tuple<int,int> temp = new Tuple<int, int>(current.Item1 + 1, current.Item2);
+                    searchPath.Add(temp);
                     parent[new Tuple<int, int>(current.Item1 + 1, current.Item2)] = current;
                 }
-                if(current.Item2 > 0 && maze[current.Item1, current.Item2-1] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2-1))){
+                if(current.Item2 > 0 && maze[current.Item1, current.Item2-1] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2-1))){
                     queue.Enqueue(new Tuple<int, int>(current.Item1 , current.Item2-1));
+                    Tuple<int,int> temp = new Tuple<int,int>(current.Item1 , current.Item2-1);
+                    searchPath.Add(temp);
                     parent[new Tuple<int, int>(current.Item1, current.Item2-1)] = current;
                 }
-                if(current.Item2 < maze.GetLength(1)-1 && maze[current.Item1, current.Item2+1] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2+1))){
+                if(current.Item2 < maze.GetLength(1)-1 && maze[current.Item1, current.Item2+1] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2+1))){
                     queue.Enqueue(new Tuple<int, int>(current.Item1, current.Item2+1));
+                    Tuple<int,int> temp = new Tuple<int,int> (current.Item1, current.Item2+1);
+                    searchPath.Add(temp);
                     parent[new Tuple<int, int>(current.Item1, current.Item2+1)] = current;
                 }
-                if(maze[current.Item1, current.Item2] == "T" && start!= current){
+                if(maze[current.Item1, current.Item2] == 'T' && start!= current){
                     found = true;
-                }
-                
+                } 
             }
+
+
             
         }
         for(int i =0; i< path.Count -1 ; i++){
@@ -63,10 +76,15 @@ class BFSsolver{
                 path.RemoveAt(i);
             }
         }
+        
+
+        // for(int i = 0; i< path.Count; i++){
+        //     Console.WriteLine("{0}, {1}", path[i].Item1, path[i].Item2);
+        // }
         return path;
     }
   
-    static List<Tuple<int,int>> BFS2point (string[,] maze, Tuple<int,int> titik1, Tuple<int,int> titik2){
+    static List<Tuple<int,int>> BFS2point (char[,] maze, Tuple<int,int> titik1, Tuple<int,int> titik2){
         Queue<Tuple<int, int>> queue = new Queue<Tuple<int, int>>();
         queue.Enqueue(new Tuple<int,int> (titik1.Item1, titik1.Item2));
         Dictionary<Tuple<int, int>, Tuple<int, int>> parent = new Dictionary<Tuple<int, int>, Tuple<int, int>>();
@@ -82,19 +100,19 @@ class BFSsolver{
                 path.Reverse();
                 return path;
             }
-            if(current.Item1 > 0 && maze[current.Item1-1, current.Item2] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1-1, current.Item2))){
+            if(current.Item1 > 0 && maze[current.Item1-1, current.Item2] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1-1, current.Item2))){
                 queue.Enqueue(new Tuple<int, int>(current.Item1 - 1, current.Item2));
                 parent[new Tuple<int, int>(current.Item1 - 1, current.Item2)] = current;
             }
-            if(current.Item1 < maze.GetLength(0)-1 && maze[current.Item1+1, current.Item2] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1+1, current.Item2))){
+            if(current.Item1 < maze.GetLength(0)-1 && maze[current.Item1+1, current.Item2] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1+1, current.Item2))){
                 queue.Enqueue(new Tuple<int, int>(current.Item1 + 1, current.Item2));
                 parent[new Tuple<int, int>(current.Item1 + 1, current.Item2)] = current;
             }
-            if(current.Item2 > 0 && maze[current.Item1, current.Item2-1] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2-1))){
+            if(current.Item2 > 0 && maze[current.Item1, current.Item2-1] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2-1))){
                 queue.Enqueue(new Tuple<int, int>(current.Item1 , current.Item2-1));
                 parent[new Tuple<int, int>(current.Item1, current.Item2-1)] = current;
             }
-            if(current.Item2 < maze.GetLength(1)-1 && maze[current.Item1, current.Item2+1] != "X" && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2+1))){
+            if(current.Item2 < maze.GetLength(1)-1 && maze[current.Item1, current.Item2+1] != 'X' && !parent.ContainsKey(new Tuple<int, int>(current.Item1, current.Item2+1))){
                 queue.Enqueue(new Tuple<int, int>(current.Item1, current.Item2+1));
                 parent[new Tuple<int, int>(current.Item1, current.Item2+1)] = current;
             }
@@ -105,32 +123,38 @@ class BFSsolver{
     }
     static void Main(string[] args)
     {
-        // Define the maze
-        string[,] maze = new string [,]{
-            {"K", "R", "R", "R"},
-            {"X", "R", "X", "T"},
-            {"X", "T", "R", "R"},
-            {"X", "R", "X", "X"}
-        };
-        // string[,] maze = new string[,] {
-        //     { "K", "R", "X", "R", "X" },
-        //     { "R", "R", "X", "R", "R" },
-        //     { "R", "T", "R", "T", "R" },
-        //     { "X", "X", "R", "R", "R" },
-        //     { "X", "X", "R", "X", "T" }
+        Matrix m = new Matrix("../test/sampel-5.txt");
+        m.printMatrix();
+        char[,] maze  = m.container;
+        int TreasureCount = m.totalTreasure;
+        Tuple<int,int> K = new Tuple<int, int> (m.startRow, m.startCol);
+        // // Define the maze
+        // string[,] maze = new string [,]{
+        //     {"K", "R", "R", "R"},
+        //     {"X", "R", "X", "T"},
+        //     {"X", "T", "R", "R"},
+        //     {"X", "R", "X", "X"}
         // };
-        // string [,] maze = new string [,]{
-        //     {"R", "R", "R", "R", "R", "R", "R"},
-        //     {"X", "T", "X", "T", "X", "T", "X"},
-        //     {"X", "R", "X", "R", "R", "R", "X"},
-        //     {"X", "R", "X", "X", "X", "X", "X"}
-        // };
-        Tuple<int,int> K = new Tuple<int, int>(0,0);
-        // Solve the maze
-        List<Tuple<int, int>> path = BFS(maze, K, util.getTreasureCount(maze));
-        // List<Tuple<int, int>> completePath = attachSolution(maze, path);
-        // List<Tuple<int, int>> completePath = BFS2point(maze, new Tuple<int, int>(1,1), new Tuple<int, int>(0,2));
-
+        // // string[,] maze = new string[,] {
+        // //     { "K", "R", "X", "R", "X" },
+        // //     { "R", "R", "X", "R", "R" },
+        // //     { "R", "T", "R", "T", "R" },
+        // //     { "X", "X", "R", "R", "R" },
+        // //     { "X", "X", "R", "X", "T" }
+        // // };
+        // // string [,] maze = new string [,]{
+        // //     {"R", "R", "R", "R", "R", "R", "R"},
+        // //     {"X", "T", "X", "T", "X", "T", "X"},
+        // //     {"X", "R", "X", "R", "R", "R", "X"},
+        // //     {"X", "R", "X", "X", "X", "X", "X"}
+        // // };
+        // Tuple<int,int> K = new Tuple<int, int>(0,0);
+        // // Solve the maze
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        List<Tuple<int, int>> path = BFS(maze, K, TreasureCount);
+        stopwatch.Stop();
+        TimeSpan timeSpan = stopwatch.Elapsed;
         // Print the path
         if (path.Count == 0)
         {
@@ -144,13 +168,9 @@ class BFSsolver{
             {
                 Console.WriteLine("{0}, {1}", point.Item1, point.Item2);
             }
-            // Console.WriteLine("Complete Path:");
-            // Console.WriteLine(path.Count);
-            // foreach (Tuple<int, int> point in path)
-            // {
-            //     Console.WriteLine("{0}, {1}", point.Item1, point.Item2);
-            // }
-            string route = util.convertRoute(path);
+             Console.WriteLine("Execution time: {0} milliseconds", timeSpan.TotalMilliseconds);
+            
+            string route = utils.convertRoute(path);
             Console.WriteLine(route);
         }
     }

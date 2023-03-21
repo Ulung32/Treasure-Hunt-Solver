@@ -1,5 +1,8 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
 namespace util{
-    class util{
+    class utils{
         public static String convertRoute(List<Tuple<int,int>> path){
             String Route = "";
             for(int i = 0; i < path.Count -1 ; i++){
@@ -21,17 +24,17 @@ namespace util{
             }
             return Route;
         }
-        public static int getTreasureCount (string[,] maze){
-            int count = 0;
-            for(int i = 0; i < maze.GetLength(0); i++){
-                for(int j = 0; j < maze.GetLength(1); j ++){
-                    if(maze[i,j] == "T"){
-                        count ++;
-                    }
-                }
-            }
-            return count;
-        }
+        // public static int getTreasureCount (string[,] maze){
+        //     int count = 0;
+        //     for(int i = 0; i < maze.GetLength(0); i++){
+        //         for(int j = 0; j < maze.GetLength(1); j ++){
+        //             if(maze[i,j] == "T"){
+        //                 count ++;
+        //             }
+        //         }
+        //     }
+        //     return count;
+        // }
     }
     public class Matrix { // Isi matriks yg diperluin kurleb gini (yg DFS)
         public char[,] container = new char[100,100];
