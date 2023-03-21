@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using util;
 class BFSsolver{
-    static List<Tuple<int, int>> BFS(char[,] maze, Tuple<int,int> K, int TreasureCount){
+    static Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> BFS(char[,] maze, Tuple<int,int> K, int TreasureCount){
         List<Tuple<int, int>> path = new List<Tuple<int, int>> ();
         Tuple<int,int> start = K;
         List<Tuple<int,int>> searchPath = new List<Tuple<int, int>>();
@@ -22,8 +22,8 @@ class BFSsolver{
                 // Console.WriteLine("before dequeue");
                 // Console.WriteLine("{0}, {1}", current.Item1, current.Item2);
                 current = queue.Dequeue();
-                Console.WriteLine("dequeue");
-                Console.WriteLine("{0}, {1}", current.Item1, current.Item2);
+                // Console.WriteLine("dequeue");
+                // Console.WriteLine("{0}, {1}", current.Item1, current.Item2);
                 if(maze[current.Item1, current.Item2] == 'T' && start!= current){
                     // Console.WriteLine("Masuk");
                     // Console.WriteLine("{0}, {1}", start.Item1, start.Item2);
@@ -78,10 +78,11 @@ class BFSsolver{
         }
         
 
-        // for(int i = 0; i< path.Count; i++){
-        //     Console.WriteLine("{0}, {1}", path[i].Item1, path[i].Item2);
+        // for(int i = 0; i< searchPath.Count; i++){
+        //     Console.WriteLine("{0}, {1}", searchPath[i].Item1, searchPath[i].Item2);
         // }
-        return path;
+        Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> hasil = new Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> (path, searchPath);
+        return hasil;
     }
   
     static List<Tuple<int,int>> BFS2point (char[,] maze, Tuple<int,int> titik1, Tuple<int,int> titik2){
@@ -123,25 +124,29 @@ class BFSsolver{
     }
     static void Main(string[] args)
     {
-        Matrix m = new Matrix("../test/sampel-5.txt");
+        // string[] file = new string[] ("../test/sampel-5.txt");
+        // Matrix m = new Matrix(file, 11, 4);
+       
+        // // Define the maze
+        // string[] maze = new string []{
+        //     "KRRR",
+        //     "XRXT",
+        //     "XTRR",
+        //     "XRXX"
+        // };
+        string[] maze = new string[] {
+             "KRXRX" ,
+             "RRXRR" ,
+             "RTRTR" ,
+             "XXRRR" ,
+             "XXRXT" 
+        };
+        Matrix m = new Matrix(maze, 5, 5);
         m.printMatrix();
-        char[,] maze  = m.container;
+        char[,] temp  = m.container;
         int TreasureCount = m.totalTreasure;
         Tuple<int,int> K = new Tuple<int, int> (m.startRow, m.startCol);
-        // // Define the maze
-        // string[,] maze = new string [,]{
-        //     {"K", "R", "R", "R"},
-        //     {"X", "R", "X", "T"},
-        //     {"X", "T", "R", "R"},
-        //     {"X", "R", "X", "X"}
-        // };
-        // // string[,] maze = new string[,] {
-        // //     { "K", "R", "X", "R", "X" },
-        // //     { "R", "R", "X", "R", "R" },
-        // //     { "R", "T", "R", "T", "R" },
-        // //     { "X", "X", "R", "R", "R" },
-        // //     { "X", "X", "R", "X", "T" }
-        // // };
+        
         // // string [,] maze = new string [,]{
         // //     {"R", "R", "R", "R", "R", "R", "R"},
         // //     {"X", "T", "X", "T", "X", "T", "X"},
@@ -152,7 +157,8 @@ class BFSsolver{
         // // Solve the maze
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
-        List<Tuple<int, int>> path = BFS(maze, K, TreasureCount);
+        List<Tuple<int, int>> path = BFS(temp, K, TreasureCount).Item1;
+        List<Tuple<int, int>> searchPath = BFS(temp, K, TreasureCount).Item2;
         stopwatch.Stop();
         TimeSpan timeSpan = stopwatch.Elapsed;
         // Print the path
@@ -168,7 +174,13 @@ class BFSsolver{
             {
                 Console.WriteLine("{0}, {1}", point.Item1, point.Item2);
             }
-             Console.WriteLine("Execution time: {0} milliseconds", timeSpan.TotalMilliseconds);
+            Console.WriteLine("Search Path:");
+            Console.WriteLine(searchPath.Count);
+            foreach (Tuple<int, int> point in searchPath)
+            {
+                Console.WriteLine("{0}, {1}", point.Item1, point.Item2);
+            }
+            Console.WriteLine("Execution time: {0} milliseconds", timeSpan.TotalMilliseconds);
             
             string route = utils.convertRoute(path);
             Console.WriteLine(route);
