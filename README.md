@@ -26,11 +26,11 @@ In the bin folder, run Treasure Hunt Solver.exe.
 Tubes2_NUB
 │
 ├───bin
-|
+│
 ├───doc
-|
+│
 ├───src
-|
+│
 ├───test
 │
 └───README.md
