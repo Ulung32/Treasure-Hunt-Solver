@@ -15,7 +15,7 @@ namespace Dfs
         private int maxVisit; // jumlah maksimum visit suatu node. Untuk backtracking
         public List<Tuple<int, int>> pathResult = new List<Tuple<int, int>>(); // Jalur hasil, untuk Path, pake dengan utils.convertRoute
         public List<Tuple<int, int>> searchPath = new List<Tuple<int, int>>(); // Jalur pencarian lengkap, untuk bonus visualisasi pencarian
-        
+
         public Dfs(Matrix m, bool tsp)
         {
             Stack<Tuple<int, int>> path = new Stack<Tuple<int, int>>(); // Stack penampung path sementara
@@ -106,7 +106,8 @@ namespace Dfs
                 searchPathStack.Push(new Tuple<int, int>(i, j));
             }
 
-            if (tsp) {
+            if (tsp)
+            {
                 // Inisialisasi ulang matriks jumlah visit untuk TSP. Node yang sudah dikunjungi diset 1 untuk
                 // mempermudah perhitungan jumlah node yang dikunjungi
                 maxVisit = 2;
@@ -190,7 +191,7 @@ namespace Dfs
                     for (int c = 0; c < m.nCol; c++)
                     {
                         visited[r, c] += tempVisited[r, c];
-                        if (tempVisited[r,c] != 0)
+                        if (tempVisited[r, c] != 0)
                         {
                             visited[r, c]--;
                         }
