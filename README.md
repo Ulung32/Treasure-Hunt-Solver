@@ -12,7 +12,10 @@ Tugas Besar II IF2211 Strategi Algoritma
 ## General Information
 Program untuk menyelesaikan permasalahan pencarian treasure dalam maze menggunakan algoritma Breadth First Search (BFS) dan Depth First Search (DFS).
 
-## How To Run
+## How To Build or Run
+### How to Build
+Build the GUI.sln solution from the src folder using Visual Studio 2022. After building, you can find Treasure Hunt Solver.exe inside the obj/Debug folder.
+### How to Run
 In the bin folder, run Treasure Hunt Solver.exe.
 
 ## Tech Stack
