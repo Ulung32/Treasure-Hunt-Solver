@@ -260,7 +260,7 @@ namespace GUI
             bfs_exectime = stopwatch.Elapsed.TotalMilliseconds;
 
             // Solve DFS
-            solve_dfs = new Dfs(maze);
+            solve_dfs = new Dfs(maze, false);
 
             // Set up the DataGridView
             dataGridView1.RowCount = rows;
@@ -369,7 +369,7 @@ namespace GUI
                     dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
                     Application.DoEvents();
                 }
-                label4.Text += path.Count.ToString(); // Steps
+                label4.Text += (path.Count-1).ToString(); // Steps
                 label5.Text += bfs_exectime.ToString() + " ms"; // Execution Time
                 label6.Text += Utils.convertRoute(path); // Route
                 label7.Text += searchPath.Count.ToString(); // Nodes
