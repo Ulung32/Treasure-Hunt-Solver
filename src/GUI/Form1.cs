@@ -36,7 +36,8 @@ namespace GUI
         private List<Tuple<int, int>> path;
         private List<Tuple<int, int>> searchPath;
         private double bfs_exectime;
-        private int pause_duration; 
+        private int pause_duration;
+        private int calculation = 0;
         private Boolean validFile = false;
         public Form1()
         {
@@ -77,9 +78,6 @@ namespace GUI
                 label9.Visible = false;
 
                 int row = 0;
-                int invalidInput = 0;
-                int totalK = 0;
-                int totalT = 0;
                 for (int i = 0; i < fileContents.Length; i++)
                 {
                     int col = 0;
@@ -90,7 +88,6 @@ namespace GUI
                         {
                             case 'K':
                                 dataGridView1[col, row].Style.BackColor = Color.White;
-                                totalK++;
                                 col++;
                                 break;
                             case 'X':
@@ -99,7 +96,6 @@ namespace GUI
                                 break;
                             case 'T':
                                 dataGridView1[col, row].Style.BackColor = Color.White;
-                                totalT++;
                                 col++;
                                 break;
                             case 'R':
@@ -109,7 +105,6 @@ namespace GUI
                             case ' ':
                                 break;
                             default:
-                                invalidInput++;
                                 break;
                         }
                     }
@@ -128,10 +123,10 @@ namespace GUI
                 // To make the trackbar enabled
                 trackBar1.Enabled = true;
                 trackBar1.Value = 0;
+
+                calculation++;
             }
         }
-
-        
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -198,6 +193,46 @@ namespace GUI
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if (calculation > 0)
+            {
+                int row = 0;
+                for (int i = 0; i < fileContents.Length; i++)
+                {
+                    int col = 0;
+                    for (int j = 0; j < fileContents[i].Length; j++)
+                    {
+                        // Set the value of the cell based on the character in the file
+                        switch (fileContents[i][j])
+                        {
+                            case 'K':
+                                dataGridView1[col, row].Value = "";
+                                col++;
+                                break;
+                            case 'X':
+                                dataGridView1[col, row].Value = "";
+                                col++;
+                                break;
+                            case 'T':
+                                dataGridView1[col, row].Value = "";
+                                col++;
+                                break;
+                            case 'R':
+                                dataGridView1[col, row].Value = "";
+                                col++;
+                                break;
+                            case ' ':
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    if (col > 0)
+                    {
+                        row++;
+                    }
+                }
+            }
+
             // Create a new instance of the OpenFileDialog class
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
@@ -214,6 +249,7 @@ namespace GUI
 
                 // Read the contents of the selected file into a string variable
                 fileContents = File.ReadAllLines(openFileDialog1.FileName);
+
                 dataGridView1_CellContentClick(null, null);
 
                 if (fileContents.Length > 0)
@@ -223,6 +259,9 @@ namespace GUI
 
                 }
             }
+
+
+            dataGridView1.Visible = false;
         }
 
         private void label8_Click(object sender, EventArgs e)
@@ -248,7 +287,6 @@ namespace GUI
             // Fill maze
             string[] copyFileContents = fileContents;
             maze = new Matrix(copyFileContents, rows, cols);
-            //MessageBox.Show(fileContents);
 
             // Solve BFS
             Tuple<int, int> K = new Tuple<int, int>(maze.startRow, maze.startCol);
@@ -260,7 +298,7 @@ namespace GUI
             bfs_exectime = stopwatch.Elapsed.TotalMilliseconds;
 
             // Solve DFS
-            solve_dfs = new Dfs(maze);
+            solve_dfs = new Dfs(maze, true);
 
             // Set up the DataGridView
             dataGridView1.RowCount = rows;
@@ -358,10 +396,11 @@ namespace GUI
         // Search Button
         private void button3_Click(object sender, EventArgs e)
         {
+            Color brightGreen = Color.FromArgb(0, 255, 0);
             // BFS Button
             if (radioButton1.Checked == true)
             {
-                foreach (Tuple<int, int> block in searchPath) // Bisa ganti ke path atau searchPath
+                foreach (Tuple<int, int> block in searchPath)
                 {
                     dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
                     Application.DoEvents();
@@ -369,7 +408,14 @@ namespace GUI
                     dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
                     Application.DoEvents();
                 }
-                label4.Text += path.Count.ToString(); // Steps
+
+                // Answer
+                foreach (Tuple<int, int> block in path)
+                {
+                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                }
+
+                label4.Text += (path.Count-1).ToString(); // Steps
                 label5.Text += bfs_exectime.ToString() + " ms"; // Execution Time
                 label6.Text += Utils.convertRoute(path); // Route
                 label7.Text += searchPath.Count.ToString(); // Nodes
@@ -384,7 +430,7 @@ namespace GUI
             // DFS Button
             else if (radioButton2.Checked == true)
             {
-                foreach (Tuple<int, int> block in solve_dfs.searchPath) // bisa diganti pathResult atau searchPath
+                foreach (Tuple<int, int> block in solve_dfs.searchPath)
                 {
                     dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
                     Application.DoEvents();
@@ -392,6 +438,13 @@ namespace GUI
                     dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
                     Application.DoEvents();
                 }
+
+                // Answer
+                foreach (Tuple<int, int> block in solve_dfs.pathResult)
+                {
+                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                }
+
                 label4.Text += solve_dfs.stepCount.ToString(); // Steps
                 label5.Text += solve_dfs.execTime.ToString() + " ms"; // Execution Time
                 label6.Text += Utils.convertRoute(solve_dfs.pathResult); // Route
@@ -406,6 +459,8 @@ namespace GUI
             }
             // To make the trackbar disabled
             trackBar1.Enabled = false;
+
+            calculation++;
 
         }
 
@@ -423,5 +478,6 @@ namespace GUI
         {
             pause_duration = trackBar1.Value;
         }
+
     }
 }

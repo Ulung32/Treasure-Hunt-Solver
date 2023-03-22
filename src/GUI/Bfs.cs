@@ -86,6 +86,11 @@ namespace Bfs
 
 
             }
+            List<Tuple<int, int>> backHome = BFS2point(maze, start, K);
+            for (int i = 0; i < backHome.Count; i++)
+            {
+                path.Add(backHome[i]);
+            }
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (path[i].Item1 == path[i + 1].Item1 && path[i].Item2 == path[i + 1].Item2)
@@ -154,31 +159,32 @@ namespace Bfs
             // Matrix m = new Matrix(file, 11, 4);
 
             // // Define the maze
-            // string[] maze = new string []{
-            //     "KRRR",
-            //     "XRXT",
-            //     "XTRR",
-            //     "XRXX"
+            //  string [] maze = new string []{
+            //     "KRRRRRR",
+            //     "XTXTXTX",
+            //     "XRXRRRX",
+            //     "XRXXXXX"
             // };
-            string[] maze = new string[] {
-                "KRXRX" ,
-                "RRXRR" ,
-                "RTRTR" ,
-                "XXRRR" ,
-                "XXRXT"
+            string[] maze = new string[]{
+                "KRRR",
+                "XRXT",
+                "XTRR",
+                "XRXX"
             };
-            Matrix m = new Matrix(maze, 5, 5);
+            // string[] maze = new string[] {
+            //     "KRXRX" ,
+            //     "RRXRR" ,
+            //     "RTRTR" ,
+            //     "XXRRR" ,
+            //     "XXRXT" 
+            // };
+            Matrix m = new Matrix(maze, 4, 7);
             m.printMatrix();
             char[,] temp = m.container;
             int TreasureCount = m.totalTreasure;
             Tuple<int, int> K = new Tuple<int, int>(m.startRow, m.startCol);
 
-            // // string [,] maze = new string [,]{
-            // //     {"R", "R", "R", "R", "R", "R", "R"},
-            // //     {"X", "T", "X", "T", "X", "T", "X"},
-            // //     {"X", "R", "X", "R", "R", "R", "X"},
-            // //     {"X", "R", "X", "X", "X", "X", "X"}
-            // // };
+
             // Tuple<int,int> K = new Tuple<int, int>(0,0);
             // // Solve the maze
             Stopwatch stopwatch = new Stopwatch();
