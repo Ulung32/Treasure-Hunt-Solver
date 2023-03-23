@@ -40,6 +40,7 @@ namespace GUI
         private int pause_duration;
         private int calculation = 0;
         private Boolean validFile = false;
+        private Size originalSize;
         public Form1()
         {
             InitializeComponent();
@@ -47,14 +48,14 @@ namespace GUI
             // To make it unmaximizable
             this.MaximizeBox = false;
 
-            // To make it unresizable
-            //this.FormBorderStyle = FormBorderStyle.FixedSingle;
-
             // To make it appear at the center of the screen
             this.StartPosition = FormStartPosition.CenterScreen;
 
             // To change GUI name
             this.Text = "Treasure Hunt Solver";
+
+            // Save original window size
+            originalSize = this.Size;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -69,6 +70,7 @@ namespace GUI
                 MessageBox.Show("File is not valid, please input another file!");
                 dataGridView1.Visible = false;
                 button3.Enabled = false;
+                calculation++;
             }
             else
             {
@@ -126,6 +128,12 @@ namespace GUI
                 trackBar1.Value = 0;
 
                 calculation++;
+
+                // Reset window size
+                this.Size = originalSize;
+
+                // To make it appear at the center of the screen
+                this.StartPosition = FormStartPosition.CenterScreen;
             }
         }
 
@@ -232,6 +240,7 @@ namespace GUI
                         row++;
                     }
                 }
+                calculation = 0;
             }
 
             // Create a new instance of the OpenFileDialog class
@@ -285,31 +294,11 @@ namespace GUI
                 }
             }
 
+
             // Fill maze
             string[] copyFileContents = fileContents;
             maze = new Matrix(copyFileContents, rows, cols);
-
-            // Solve BFS
-            // Reset path and searchPath
-            path.Clear();
-            searchPath.Clear();
-            pathTsp.Clear();
-            searchPathTsp.Clear();
             Tuple<int, int> K = new Tuple<int, int>(maze.startRow, maze.startCol);
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            BFSsolver.BFS(maze.container, K, maze.totalTreasure, false, ref path, ref searchPath);
-            stopwatch.Stop();
-            bfs_exectime = stopwatch.Elapsed.TotalMilliseconds;
-            stopwatch.Reset();
-            stopwatch.Start();
-            BFSsolver.BFS(maze.container, K, maze.totalTreasure, true, ref pathTsp, ref searchPathTsp);
-            stopwatch.Stop();
-            bfs_tsp_exectime = stopwatch.Elapsed.TotalMilliseconds;
-
-            // Solve DFS
-            solve_dfs = new Dfs(maze, false);
-            solve_dfs_tsp = new Dfs(maze, true);
 
             // Set up the DataGridView
             dataGridView1.RowCount = rows;
@@ -389,13 +378,41 @@ namespace GUI
                 }
             }
             // Input Validation
-            if (invalidInput == 0 && totalK == 1 && totalT >= 1)
+            if (totalK != 1)
+            {
+                validFile = false;
+            }
+            else if (invalidInput == 0 && totalT >= 1)
             {
                 validFile = true;
             }
             else
             {
                 validFile = false;
+            }
+
+            if (validFile)
+            {
+                // Solve BFS
+                // Reset path and searchPath
+                path.Clear();
+                searchPath.Clear();
+                pathTsp.Clear();
+                searchPathTsp.Clear();
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                BFSsolver.BFS(maze.container, K, maze.totalTreasure, false, ref path, ref searchPath);
+                stopwatch.Stop();
+                bfs_exectime = stopwatch.Elapsed.TotalMilliseconds;
+                stopwatch.Reset();
+                stopwatch.Start();
+                BFSsolver.BFS(maze.container, K, maze.totalTreasure, true, ref pathTsp, ref searchPathTsp);
+                stopwatch.Stop();
+                bfs_tsp_exectime = stopwatch.Elapsed.TotalMilliseconds;
+
+                // Solve DFS
+                solve_dfs = new Dfs(maze, false);
+                solve_dfs_tsp = new Dfs(maze, true);
             }
         }
 
