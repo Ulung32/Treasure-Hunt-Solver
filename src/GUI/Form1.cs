@@ -61,7 +61,7 @@ namespace GUI
         {
 
         }
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (!validFile)
@@ -114,7 +114,7 @@ namespace GUI
                         row++;
                     }
                 }
-            MessageBox.Show("The map from your file has been visualized! :)");
+                MessageBox.Show("The map from your file has been visualized! :)");
                 // To make the visualization visible
                 dataGridView1.Visible = true;
 
@@ -165,25 +165,25 @@ namespace GUI
         // Steps
         private void label4_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         // Execution Time
         private void label5_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         // Route
         private void label6_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         // Node
         private void label7_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -298,7 +298,7 @@ namespace GUI
             Tuple<int, int> K = new Tuple<int, int>(maze.startRow, maze.startCol);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            BFSsolver.BFS(maze.container, K, maze.totalTreasure,false,ref path,ref searchPath);
+            BFSsolver.BFS(maze.container, K, maze.totalTreasure, false, ref path, ref searchPath);
             stopwatch.Stop();
             bfs_exectime = stopwatch.Elapsed.TotalMilliseconds;
             stopwatch.Reset();
@@ -333,7 +333,7 @@ namespace GUI
                 dataGridView1.Columns[i].Width = cellWidth;
                 dataGridView1.Columns[i].Resizable = DataGridViewTriState.False;
             }
-            
+
             // To make the grid view unscrollable
             dataGridView1.ScrollBars = ScrollBars.None;
 
@@ -439,7 +439,8 @@ namespace GUI
 
                     // To reset pause duration
                     pause_duration = 0;
-                } else
+                }
+                else
                 {
                     foreach (Tuple<int, int> block in searchPath)
                     {
@@ -491,7 +492,8 @@ namespace GUI
                     label6.Text += Utils.convertRoute(solve_dfs_tsp.pathResult); // Route
                     label7.Text += solve_dfs_tsp.visitCount.ToString(); // Nodes
                     label9.Visible = true;
-                } else
+                }
+                else
                 {
                     foreach (Tuple<int, int> block in solve_dfs.searchPath)
                     {
