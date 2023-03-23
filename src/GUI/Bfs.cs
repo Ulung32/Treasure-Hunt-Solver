@@ -7,10 +7,9 @@ namespace Bfs {
     using Utils;
     using Matrix;
     class BFSsolver {
-        public static Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> BFS(char[,] maze, Tuple<int,int> K, int TreasureCount){
-            List<Tuple<int, int>> path = new List<Tuple<int, int>> ();
+        public static void BFS(char[,] maze, Tuple<int,int> K, int TreasureCount, bool tsp, ref List<Tuple<int, int>> path, ref List<Tuple<int, int>> searchPath)
+        {
             Tuple<int,int> start = K;
-            List<Tuple<int,int>> searchPath = new List<Tuple<int, int>>();
             while(TreasureCount > 0){
                 Queue<Tuple<int, int>> queue = new Queue<Tuple<int, int>>();
                 searchPath.Add(start);
@@ -74,9 +73,13 @@ namespace Bfs {
 
                 
             }
-            List<Tuple<int, int>> backHome = BFS2point(maze, start, K);
-            for(int i = 0; i < backHome.Count; i++){
-                path.Add(backHome[i]);
+            if (tsp)
+            {
+                List<Tuple<int, int>> backHome = BFS2point(maze, start, K);
+                for (int i = 0; i < backHome.Count; i++)
+                {
+                    path.Add(backHome[i]);
+                }
             }
             for(int i =0; i< path.Count -1 ; i++){
                 if(path[i].Item1 == path[i+1].Item1 && path[i].Item2 == path[i+1].Item2){
@@ -89,7 +92,6 @@ namespace Bfs {
             //     Console.WriteLine("{0}, {1}", searchPath[i].Item1, searchPath[i].Item2);
             // }
             Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> hasil = new Tuple<List<Tuple<int, int>>, List<Tuple<int, int>>> (path, searchPath);
-            return hasil;
         }
     
         static List<Tuple<int,int>> BFS2point (char[,] maze, Tuple<int,int> titik1, Tuple<int,int> titik2){

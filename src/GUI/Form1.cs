@@ -31,11 +31,12 @@ namespace GUI
         private string fileName;
         private string[] fileContents;
         private Matrix maze;
-        private BFSsolver solve_bfs;
-        private Dfs solve_dfs;
-        private List<Tuple<int, int>> path;
-        private List<Tuple<int, int>> searchPath;
-        private double bfs_exectime;
+        private Dfs solve_dfs, solve_dfs_tsp;
+        private List<Tuple<int, int>> path = new List<Tuple<int, int>>();
+        private List<Tuple<int, int>> searchPath = new List<Tuple<int, int>>();
+        private List<Tuple<int, int>> pathTsp = new List<Tuple<int, int>>();
+        private List<Tuple<int, int>> searchPathTsp = new List<Tuple<int, int>>();
+        private double bfs_exectime, bfs_tsp_exectime;
         private int pause_duration;
         private int calculation = 0;
         private Boolean validFile = false;
@@ -256,7 +257,7 @@ namespace GUI
                 {
                     radioButton1.Enabled = true;
                     radioButton2.Enabled = true;
-
+                    checkBox1.Enabled = true;
                 }
             }
 
@@ -289,16 +290,26 @@ namespace GUI
             maze = new Matrix(copyFileContents, rows, cols);
 
             // Solve BFS
+            // Reset path and searchPath
+            path.Clear();
+            searchPath.Clear();
+            pathTsp.Clear();
+            searchPathTsp.Clear();
             Tuple<int, int> K = new Tuple<int, int>(maze.startRow, maze.startCol);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            path = BFSsolver.BFS(maze.container, K, maze.totalTreasure).Item1;
+            BFSsolver.BFS(maze.container, K, maze.totalTreasure,false,ref path,ref searchPath);
             stopwatch.Stop();
-            searchPath = BFSsolver.BFS(maze.container, K, maze.totalTreasure).Item2;
             bfs_exectime = stopwatch.Elapsed.TotalMilliseconds;
+            stopwatch.Reset();
+            stopwatch.Start();
+            BFSsolver.BFS(maze.container, K, maze.totalTreasure, true, ref pathTsp, ref searchPathTsp);
+            stopwatch.Stop();
+            bfs_tsp_exectime = stopwatch.Elapsed.TotalMilliseconds;
 
             // Solve DFS
-            solve_dfs = new Dfs(maze, true);
+            solve_dfs = new Dfs(maze, false);
+            solve_dfs_tsp = new Dfs(maze, true);
 
             // Set up the DataGridView
             dataGridView1.RowCount = rows;
@@ -396,63 +407,113 @@ namespace GUI
         // Search Button
         private void button3_Click(object sender, EventArgs e)
         {
+            // To disable button
+            button3.Enabled = false;
             Color brightGreen = Color.FromArgb(0, 255, 0);
             // BFS Button
-            if (radioButton1.Checked == true)
+            if (radioButton1.Checked)
             {
-                foreach (Tuple<int, int> block in searchPath)
+                // TSP
+                if (checkBox1.Checked)
                 {
-                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
-                    Application.DoEvents();
-                    Thread.Sleep(pause_duration * 100);
-                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
-                    Application.DoEvents();
-                }
+                    foreach (Tuple<int, int> block in searchPathTsp)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
+                        Application.DoEvents();
+                        Thread.Sleep(pause_duration * 100);
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
+                        Application.DoEvents();
+                    }
 
-                // Answer
-                foreach (Tuple<int, int> block in path)
+                    // Answer
+                    foreach (Tuple<int, int> block in pathTsp)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                    }
+
+                    label4.Text += (pathTsp.Count - 1).ToString(); // Steps
+                    label5.Text += bfs_tsp_exectime.ToString() + " ms"; // Execution Time
+                    label6.Text += Utils.convertRoute(pathTsp); // Route
+                    label7.Text += searchPathTsp.Count.ToString(); // Nodes
+                    label9.Visible = true;
+
+                    // To reset pause duration
+                    pause_duration = 0;
+                } else
                 {
-                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                    foreach (Tuple<int, int> block in searchPath)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
+                        Application.DoEvents();
+                        Thread.Sleep(pause_duration * 100);
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
+                        Application.DoEvents();
+                    }
+
+                    // Answer
+                    foreach (Tuple<int, int> block in path)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                    }
+
+                    label4.Text += (path.Count - 1).ToString(); // Steps
+                    label5.Text += bfs_exectime.ToString() + " ms"; // Execution Time
+                    label6.Text += Utils.convertRoute(path); // Route
+                    label7.Text += searchPath.Count.ToString(); // Nodes
+                    label9.Visible = true;
+
+                    // To reset pause duration
+                    pause_duration = 0;
                 }
-
-                label4.Text += (path.Count-1).ToString(); // Steps
-                label5.Text += bfs_exectime.ToString() + " ms"; // Execution Time
-                label6.Text += Utils.convertRoute(path); // Route
-                label7.Text += searchPath.Count.ToString(); // Nodes
-                label9.Visible = true;
-
-                // To disable button
-                button3.Enabled = false;
-
-                // To reset pause duration
-                pause_duration = 0;
             }
             // DFS Button
-            else if (radioButton2.Checked == true)
+            else if (radioButton2.Checked)
             {
-                foreach (Tuple<int, int> block in solve_dfs.searchPath)
+                if (checkBox1.Checked)
                 {
-                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
-                    Application.DoEvents();
-                    Thread.Sleep(pause_duration * 100);
-                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
-                    Application.DoEvents();
-                }
+                    foreach (Tuple<int, int> block in solve_dfs_tsp.searchPath)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
+                        Application.DoEvents();
+                        Thread.Sleep(pause_duration * 100);
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
+                        Application.DoEvents();
+                    }
 
-                // Answer
-                foreach (Tuple<int, int> block in solve_dfs.pathResult)
+                    // Answer
+                    foreach (Tuple<int, int> block in solve_dfs_tsp.pathResult)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                    }
+
+                    label4.Text += solve_dfs_tsp.stepCount.ToString(); // Steps
+                    label5.Text += solve_dfs_tsp.execTime.ToString() + " ms"; // Execution Time
+                    label6.Text += Utils.convertRoute(solve_dfs_tsp.pathResult); // Route
+                    label7.Text += solve_dfs_tsp.visitCount.ToString(); // Nodes
+                    label9.Visible = true;
+                } else
                 {
-                    dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                    foreach (Tuple<int, int> block in solve_dfs.searchPath)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Blue;
+                        Application.DoEvents();
+                        Thread.Sleep(pause_duration * 100);
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = Color.Yellow;
+                        Application.DoEvents();
+                    }
+
+                    // Answer
+                    foreach (Tuple<int, int> block in solve_dfs.pathResult)
+                    {
+                        dataGridView1.Rows[block.Item1].Cells[block.Item2].Style.BackColor = brightGreen;
+                    }
+
+                    label4.Text += solve_dfs.stepCount.ToString(); // Steps
+                    label5.Text += solve_dfs.execTime.ToString() + " ms"; // Execution Time
+                    label6.Text += Utils.convertRoute(solve_dfs.pathResult); // Route
+                    label7.Text += solve_dfs.visitCount.ToString(); // Nodes
+                    label9.Visible = true;
                 }
-
-                label4.Text += solve_dfs.stepCount.ToString(); // Steps
-                label5.Text += solve_dfs.execTime.ToString() + " ms"; // Execution Time
-                label6.Text += Utils.convertRoute(solve_dfs.pathResult); // Route
-                label7.Text += solve_dfs.visitCount.ToString(); // Nodes
-                label9.Visible = true;
-
-                // To disable button
-                button3.Enabled = false;
 
                 // To reset pause duration
                 pause_duration = 0;
@@ -474,10 +535,14 @@ namespace GUI
 
         }
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             pause_duration = trackBar1.Value;
         }
-
     }
 }
