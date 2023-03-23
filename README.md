@@ -29,13 +29,41 @@ In the bin folder, run Treasure Hunt Solver.exe.
 Tubes2_NUB
 │
 ├───bin
+│    └───Treasure Hunt Solver.exe
 │
 ├───doc
+│    └───NUB.pdf
 │
 ├───src
-│
+│    ├───GUI
+│    │    ├───bin
+│    │    ├───Images
+│    │    │    ├───Treasure Chest.jpg
+│    │    │    └───Treasure Map.jpg
+│    │    │
+│    │    ├───Properties
+│    │    ├───App.config
+│    │    ├───Bfs.cs
+│    │    ├───Dfs.cs
+│    │    ├───Form1.cs
+│    │    ├───Form1.Designer.cs
+│    │    ├───Form1.resx
+│    │    ├───GUI.csproj
+│    │    ├───GUI.csproj.user
+│    │    ├───Matrix.cs
+│    │    ├───Program.cs
+│    │    └───Utils.cs
+│    │
+│    └───GUI.sln
+|
 ├───test
-│
+│    ├───sampel-1.txt
+│    ├───sampel-2.txt
+│    ├───sampel-3.txt
+│    ├───sampel-4.txt
+│    ├───sampel-5.txt
+│    └───test.txt
+│ 
 └───README.md
 ```
 
