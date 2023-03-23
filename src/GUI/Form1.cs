@@ -346,7 +346,6 @@ namespace GUI
                         case 'K':
                             dataGridView1[col, row].Value = "Start";
                             totalK++;
-                            K = Tuple.Create(i, j); // Set starting point
                             col++;
                             break;
                         case 'X':
