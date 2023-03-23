@@ -54,8 +54,7 @@ Tubes2_NUB
 │    │    ├───Program.cs
 │    │    └───Utils.cs
 │    │
-│    └───Solution
-│         └───GUI.sln
+│    └───GUI.sln
 │
 ├───test
 │    ├───sampel-1.txt
